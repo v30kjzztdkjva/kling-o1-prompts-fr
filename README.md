@@ -1,0 +1,139 @@
+# Kling Video O1 Prompts — 8 Tested Recipes With Outputs
+
+<!-- conv-kit:v1 -->
+
+<p align="center">
+  <img src="assets/badges/price.svg" alt="observed unit price"> <img src="assets/badges/billing.svg" alt="billing model"> <img src="assets/badges/compat.svg" alt="OpenAI-compatible endpoint">
+</p>
+
+<p align="center">
+  <img src="assets/01-product-ad-ceramic-mug-thumb.jpg" width="820" alt="Sample video frame generated through APIMart">
+</p>
+
+> **from $0.0672 per second** on the APIMart route — un seul endpoint compatible OpenAI sur `https://api.apimart.ai/v1`, sans abonnement mensuel. *(relevé le 2026-10-12)*
+
+**[Get an API key](https://go.apimart.ai/k-fbc6ff)** · **[Live pricing](https://go.apimart.ai/k-e11e7d)** · **[Model page](https://go.apimart.ai/k-b56f2d)** · [⚡ 60-second quickstart](#quickstart)
+
+**Pourquoi les équipes passent par APIMart pour Kling Video O1 (`kling-video-o1`)**
+
+- **Une clé, tout le catalogue.** La même base URL `https://api.apimart.ai/v1` et le même en-tête `Authorization` donnent accès à Kling Video O1 (`kling-video-o1`) et à plus de 300 autres modèles d'image, de vidéo et de langage — changez le champ `model`, pas votre client.
+- **$1 minimum, paiement à l'usage.** Ni abonnement ni forfait prépayé à dimensionner à l'avance : rechargez à partir de $1 et consommez-le en appels.
+- **Le montant revient dans la réponse.** Chaque tâche terminée indique le montant facturé (`cost` / `credits_cost`) ; une tâche marquée `failed` est remboursée.
+- **Asynchrone par conception.** Soumettez, récupérez le `task_id`, interrogez `GET /v1/tasks/{id}` — le traitement par lots et les retries relèvent d'une file d'attente ordinaire, pas d'une intégration sur mesure.
+
+<!-- /conv-kit:v1 -->
+
+
+
+Four **Kling Video O1 prompts** listed with an example render, the duration, and what the call costs on this route. Copy a recipe, keep the structure, swap the subject.
+
+- Model: `kling-video-o1`
+- Recipes: **4** (machine-readable in [`data/prompts.json`](data/prompts.json), table in [`PROMPTS.md`](PROMPTS.md))
+- Effective price used below: **$0.0672 per second** — estimated cost of the whole set: **$0.2688**
+
+## What separates a usable recipe from a wasted call
+
+Three rules held up across every render in this set:
+
+1. **Name the material, not the adjective.** "Frosted glass", "matte ceramic", "layered paper" steer rendering far more
+   than "beautiful" or "high quality".
+2. **Set the light explicitly.** "Single softbox from the left", "golden hour backlight", "focus-stacked studio light"
+   remove the guesswork the model would otherwise do for you.
+3. **Pin the framing.** Ratio plus lens language (`85mm`, `24mm`, `macro`, overhead flat lay) decides whether the output
+   drops into a layout unchanged.
+
+## Prompt structure cheat-sheet
+
+| Slot | What to write | Example |
+| --- | --- | --- |
+| Subject | one concrete object or person, with material | *frosted glass perfume bottle* |
+| Light | direction + quality | *single softbox from the left* |
+| Framing | ratio + lens or distance | *3:4, medium format look* |
+| Setting | surface, backdrop, environment | *wet black stone slab* |
+| Finish | render or film character | *commercial product photography* |
+
+## The gallery
+
+Each row is one recipe: example render, category, duration, cost on this route and the exact prompt.
+
+| Output | Recipe | Duration | Cost | Prompt |
+| --- | --- | --- | --- | --- |
+| <img src="assets/01-product-ad-ceramic-mug-thumb.jpg" width="220" alt="Sample video frame generated through APIMart"> | Product ad | 5s | $0.0672 | `Slow 180° orbit around a matte ceramic mug on a dark stone plinth, steam rising, soft key light from camera left, shallow depth of field, product commercial` |
+| <img src="assets/02-cinematic-rainy-street-thumb.jpg" width="220" alt="Sample video frame generated through APIMart"> | Cinematic | 5s | $0.0672 | `Rain soaked street at night, camera pushes in slowly past neon reflections, a lone figure with an umbrella walks away from camera, 35mm anamorphic, film grain` |
+| <img src="assets/03-food-ad-steam-thumb.jpg" width="220" alt="Sample video frame generated through APIMart"> | Food commercial | 5s | $0.0672 | `Overhead view tilting down to 45° onto a steaming bowl of ramen, chopsticks lift the noodles, warm practical light, macro detail, appetising commercial grade` |
+| <img src="assets/04-architecture-flythrough-thumb.jpg" width="220" alt="Sample video frame generated through APIMart"> | Architecture | 5s | $0.0672 | `Slow aerial flythrough of a concrete villa at dusk, camera pushes across the infinity pool toward warm interior light, 24mm, ultra sharp` |
+
+## Run a recipe yourself
+
+```bash
+export APIMART_API_KEY=...
+python examples/run_recipes.py --dry-run                 # list the recipes, no network
+python examples/run_recipes.py --limit 2                 # generate two of them
+```
+
+```bash
+curl --request POST --url https://api.apimart.ai/v1/videos/generations \
+  --header "Authorization: Bearer $APIMART_API_KEY" --header 'Content-Type: application/json' \
+  -d '{"model":"kling-video-o1","prompt":"<paste a prompt>","duration":5,"resolution":"720P","size":"16:9"}'
+```
+
+Result links expire 72 hours after completion, so store the outputs; the completed task carries `cost` for reconciliation.
+
+## FAQ
+
+**Are these prompts free to reuse?**
+
+Yes — the prompt text in this repository is MIT licensed. The generated images and any third-party marks they contain remain your responsibility, and you should check the model vendor's terms before publishing commercial work.
+
+**Why do the recipes use different aspect ratios?**
+
+Because ratio is a layout decision, not a style one: 1:1 for catalogue and icons, 16:9 for hero and video thumbnails, 3:4 or 2:3 for portraits and print. Pinning it up front avoids cropping later.
+
+**How much does one recipe cost to run?**
+
+**from $0.0672 per second** on the APIMart route. Every completed task reports the exact amount in its `cost` field; a failed task is refunded.
+
+**Can I use a recipe as a template for another subject?**
+
+That is the point. Keep the structure (subject + light + framing + setting + finish) and replace the subject; changing everything at once makes it impossible to tell which phrase moved the output.
+
+<!-- related-repos:auto -->
+## Related repositories
+
+- **Same model, this language** — the other half of this pair: [kling-o1-api-fr](https://github.com/v30kjzztdkjva/kling-o1-api-fr)
+- **Same model, other languages** — 10 more language builds: English `kling-o1-api` · 中文 `kling-o1-api-cn` · Deutsch `kling-o1-api-de` · Español `kling-o1-api-es` · Relay/gateway `kling-o1-api-gateway` · Bahasa `kling-o1-api-id` · 日本語 `kling-o1-api-ja` · 한국어 [kling-o1-api-ko](https://github.com/j8eydhamrktbk/kling-o1-api-ko) · Português `kling-o1-api-pt` · Русский `kling-o1-api-ru`
+- **More models in this language** — [midjourney-api-fr](https://github.com/apimartt1q/midjourney-api-fr) · [gemini-2-5-flash-image-preview-api-fr](https://github.com/haftslut7ha/gemini-2-5-flash-image-preview-api-fr) · [nano-banana-api-fr](https://github.com/f84q06w110/nano-banana-api-fr) · [gemini-3-1-flash-image-preview-api-fr](https://github.com/ok71ckyc/gemini-3-1-flash-image-preview-api-fr) · [nano-banana-2-api-fr](https://github.com/ms0p12t/nano-banana-2-api-fr) · [gemini-3-pro-image-preview-api-fr](https://github.com/w-44vba/gemini-3-pro-image-preview-api-fr)
+- **Topic hubs** — every build of this model, all languages: [kling-o1](https://github.com/topics/kling-o1) · [kling-o1-api](https://github.com/topics/kling-o1-api)
+
+This repository is one build in a cross-linked set of API guides for the same model family; each language build links back to the others.
+<!-- /related-repos:auto -->
+## Attributed links (how this repository is measured)
+
+| Purpose | Attributed link | Target |
+| --- | --- | --- |
+| Model page | <https://go.apimart.ai/k-b56f2d> | `apimart.ai/fr/model/kling-video-o1` |
+| Live pricing | <https://go.apimart.ai/k-e11e7d> | `apimart.ai/fr/pricing` |
+| Get an API key | <https://go.apimart.ai/k-fbc6ff> | `apimart.ai/fr/keys` |
+
+Outbound APIMart links are minted through the promo link API; hand-made tracking parameters are rejected by
+`tools/check_links.py` in CI.
+
+## Disclosure
+
+Kling Video O1 is a third-party model served through APIMart. This repository publishes prompts, example renders and
+cost logic; it does not claim official status for any vendor, and model names and documentation belong to their owners.
+
+## Repository map
+
+```text
+README.md              gallery, prompt structure and FAQ
+PROMPTS.md             every recipe in one table
+data/prompts.json      machine-readable recipes with per-unit cost
+examples/run_recipes.py  batch runner (dry-run safe for CI)
+tools/check_links.py   attribution guard
+assets/                example renders via the APIMart image API (JPEG)
+```
+
+## License
+
+MIT — see [LICENSE](LICENSE).
